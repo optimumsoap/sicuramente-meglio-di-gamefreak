@@ -6,7 +6,32 @@ canvas.width = 1024 //(canvas.width e .height) ridimensionamento del nostro canv
 canvas.height = 576
 //(c.fillRect) viene utilizzato per disegnare un rettangolo pieno. Con quattro parametri: le coordinate x e y e la larghezza e l'altezza del rettangolo da disegnare.
 
+const scaledCanvas = {
+    width: canvas.width/4,
+    height: canvas.height/4
+}
+
 const gravity = 0.5
+
+//Inserimento background con la creazione di una "class" in modo da inserire la nostra immagine che definiamo sprite
+class Sprite {
+    constructor({position, imageSrc}) {
+        this.position = position
+        this.image = new Image()
+        this.image.src = imageSrc
+    }
+
+    draw(){
+        if(!this.image) return //questo previene possibili errori nella console in caso l'immagine non venisse caricata propriamente
+        c.drawImage(this.image, this.position.x, this.position.y ) //il primo punto indica l'immagine, il secondo le coordinate x e il terzo quelle y
+    
+    }
+
+    update(){
+        this.draw()
+    }
+}
+
 
 
 // CREAZIONE GRAVITA'
@@ -59,10 +84,26 @@ const keys = { //tutti i tasti della tastiera che voglio "sentire"
     },
 }
 
+
+const background = new Sprite({
+    position:{
+        x:0,
+        y:0,
+    },
+    imageSrc: './img/background.png'
+})
+
+
 function animazione(){
     window.requestAnimationFrame(animazione)  //Il metodo window.requestAnimationFrame() dice al browser che desideri eseguire un'animazione.
     c.fillStyle = 'white' //il colore del canvas è di base nero
     c.fillRect(0, 0, canvas.width, canvas.height) 
+
+    c.save() //guardare c.restore() per la spiegazione
+    c.scale(4, 4) //ridimensioniamo l'immagine per adattarla al nostro formato
+    c.translate(0, -background.image.height + scaledCanvas.height) //ci permette di traslare l'immagine, perché all'inizio partiva dall'alto, ma per spostarla verso il basso abbiamo utilizzato il translate i cui valori tra parentesi indicavano le coordinate.
+    background.update() // abbiamo inserito nell'animazione la nostra immagine
+    c.restore() //entrambi usati per applicare modifiche solo a ciò che contenuto tra c.save() e c.restore()
     player.update() //abbiamo inserito il nostro player che cade all'interno dell'animazione sopra scritta (update ne aggiorna la posizione facendolo cadere verso il basso)
     player2.update() // le sue coordinate vanno aggiornate altrimenti sarebbero sovrapposti visto che utilizziamo le stesse proprietà che possiede anche il player1
 
@@ -97,5 +138,7 @@ window.addEventListener('keyup', (event) => {
     break
     }
 })
+
+
 
 animazione() //quando questa funzione viene chiamata nel codice permette alla funzione di andare in loop grazie al comando "window.requestAnimationframe" che rimanda alla funzione "animazione" grazie al fatto che contiene essa stessa all'interno delle parentesi.
