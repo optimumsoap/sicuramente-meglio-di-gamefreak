@@ -11,6 +11,13 @@ const scaledCanvas = {
     height: canvas.height/4
 }
 
+const floorCollisions2D = [] //si crea una costante che è collegata ai dati immagazzinati nell'array collisions
+for (let i = 0; i < floorCollisions.length; i += 36) { 
+floorCollisions2D.push(floorCollisions.slice(i, i + 36))
+}//tutto questo crea un array 2D così che in questo arry gli 0 indicano lo spazio vuoto invece gli 202 indicano i blocchi di collisione
+
+floorCollisions2D.forEach() =>
+
 const gravity = 0.5
 
 //Inserimento background con la creazione di una "class" in modo da inserire la nostra immagine che definiamo sprite
