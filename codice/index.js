@@ -16,28 +16,41 @@ for (let i = 0; i < floorCollisions.length; i += 36) {
 floorCollisions2D.push(floorCollisions.slice(i, i + 36))
 }//tutto questo crea un array 2D così che in questo arry gli 0 indicano lo spazio vuoto invece gli 202 indicano i blocchi di collisione
 
-floorCollisions2D.forEach() =>
+
+const collisionBlock = []//creazione dei blocchi di collisione
+floorCollisions2D.forEach((row, y) => {
+row.forEach((symbol, x) => {
+    if(symbol === 202) {
+        console.log('draw a block here!')
+        collisionBlock.push(new CollisionBlock({position: {
+            x: x * 16,
+            y: y * 16,
+        },}))
+    }
+    })
+})
+
+const platformCollisions2D = [] //si crea una costante che è collegata ai dati immagazzinati nell'array collisions
+for (let i = 0; i < platformCollisions.length; i += 36) { 
+platformCollisions2D.push(platformCollisions.slice(i, i + 36))
+}
+
+const platformCollisionBlock = []//creazione dei blocchi di collisione
+platformCollisions2D.forEach((row, y) => {
+row.forEach((symbol, x) => {
+    if(symbol === 202) {
+        console.log('draw a block here!')
+        platformCollisionBlock.push(new CollisionBlock({position: {
+            x: x * 16,
+            y: y * 16,
+        },}))
+    }
+    })
+})
+
+
 
 const gravity = 0.5
-
-//Inserimento background con la creazione di una "class" in modo da inserire la nostra immagine che definiamo sprite
-class Sprite {
-    constructor({position, imageSrc}) {
-        this.position = position
-        this.image = new Image()
-        this.image.src = imageSrc
-    }
-
-    draw(){
-        if(!this.image) return //questo previene possibili errori nella console in caso l'immagine non venisse caricata propriamente
-        c.drawImage(this.image, this.position.x, this.position.y ) //il primo punto indica l'immagine, il secondo le coordinate x e il terzo quelle y
-    
-    }
-
-    update(){
-        this.draw()
-    }
-}
 
 
 
@@ -45,33 +58,7 @@ class Sprite {
 //step 1(creare gravita' per far cadere il player sennò rimarrebbe sospeso nell'aria)
 //step 2 (rendere la gravità realistica aumentando la velocità di caduta ad ogni frame)
 
-class Player { //Le classi sono un modello per creare oggetti.
-    constructor(position){ //permette di identificare tutte le proprietà del nostro player
-        this.position = position 
-        this.velocity = {
-            x: 0,
-            y: 1,
-        }
-        this.height = 100
-    }
 
-    draw() {
-        c.fillStyle = 'red' //colore dell'hitbox player
-        c.fillRect(this.position.x , this.position.y, 100, this.height) //dimensione del player
-        //nota n2= utilizziamo invece di inserire le coordinate manualmente, le coordinate definite nel constructor precedente con "this.position.x" e .y
-    }
-
-    //adesso però dobbiamo fargli cambiare le coordinate
-    update(){
-        this.draw() //(con .draw il nostro bel player comparirà)
-
-        this.position.x += this.velocity.x //creazione di una variabile velocità così da permettere di cambiare più agilmente la velocità rispetto ad un semplice y++
-        this.position.y += this.velocity.y
-        if(this.position.y + this.height + this.velocity.y < canvas.height) //funzione realistica di gravità aumentando la velocità sempre più mentre si cade
-        this.velocity.y += gravity //valore della gravità
-        else this.velocity.y = 0 //blocco della caduta quando si tocca la fine della pagina
-    }
-}
 
 const player = new Player({
     x: 0,
@@ -110,7 +97,17 @@ function animazione(){
     c.scale(4, 4) //ridimensioniamo l'immagine per adattarla al nostro formato
     c.translate(0, -background.image.height + scaledCanvas.height) //ci permette di traslare l'immagine, perché all'inizio partiva dall'alto, ma per spostarla verso il basso abbiamo utilizzato il translate i cui valori tra parentesi indicavano le coordinate.
     background.update() // abbiamo inserito nell'animazione la nostra immagine
+    collisionBlock.forEach(collisionBlock => {
+        collisionBlock.update()
+    })
+
+    platformCollisionBlock.forEach(block => {
+        block.update()
+    })
     c.restore() //entrambi usati per applicare modifiche solo a ciò che contenuto tra c.save() e c.restore()
+
+
+
     player.update() //abbiamo inserito il nostro player che cade all'interno dell'animazione sopra scritta (update ne aggiorna la posizione facendolo cadere verso il basso)
     player2.update() // le sue coordinate vanno aggiornate altrimenti sarebbero sovrapposti visto che utilizziamo le stesse proprietà che possiede anche il player1
 
