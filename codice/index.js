@@ -17,12 +17,12 @@ floorCollisions2D.push(floorCollisions.slice(i, i + 36))
 }//tutto questo crea un array 2D così che in questo arry gli 0 indicano lo spazio vuoto invece gli 202 indicano i blocchi di collisione
 
 
-const collisionBlock = []//creazione dei blocchi di collisione
+const collisionBlocks = []//creazione dei blocchi di collisione
 floorCollisions2D.forEach((row, y) => {
 row.forEach((symbol, x) => {
     if(symbol === 202) {
         console.log('draw a block here!')
-        collisionBlock.push(new CollisionBlock({position: {
+        collisionBlocks.push(new CollisionBlock({position: {
             x: x * 16,
             y: y * 16,
         },}))
@@ -61,12 +61,13 @@ const gravity = 0.5
 
 
 const player = new Player({
-    x: 0,
+    position: {
+    x: 100,
     y: 0,
-})
-const player2 = new Player({
-    x: 300,
-    y: 100,
+    },
+    collisionBlocks,
+    imageSrc: './img/warrior/idle.png',
+    frameRate: 8,
 })
 
 const keys = { //tutti i tasti della tastiera che voglio "sentire"
@@ -97,23 +98,25 @@ function animazione(){
     c.scale(4, 4) //ridimensioniamo l'immagine per adattarla al nostro formato
     c.translate(0, -background.image.height + scaledCanvas.height) //ci permette di traslare l'immagine, perché all'inizio partiva dall'alto, ma per spostarla verso il basso abbiamo utilizzato il translate i cui valori tra parentesi indicavano le coordinate.
     background.update() // abbiamo inserito nell'animazione la nostra immagine
-    collisionBlock.forEach(collisionBlock => {
+    collisionBlocks.forEach(collisionBlock => {
         collisionBlock.update()
     })
 
     platformCollisionBlock.forEach(block => {
         block.update()
     })
-    c.restore() //entrambi usati per applicare modifiche solo a ciò che contenuto tra c.save() e c.restore()
 
-
-
-    player.update() //abbiamo inserito il nostro player che cade all'interno dell'animazione sopra scritta (update ne aggiorna la posizione facendolo cadere verso il basso)
-    player2.update() // le sue coordinate vanno aggiornate altrimenti sarebbero sovrapposti visto che utilizziamo le stesse proprietà che possiede anche il player1
+       player.update() //abbiamo inserito il nostro player che cade all'interno dell'animazione sopra scritta (update ne aggiorna la posizione facendolo cadere verso il basso)
 
     player.velocity.x = 0
     if(keys.d.pressed)player.velocity.x = 5
     else if (keys.a.pressed) player.velocity.x = -5
+
+    c.restore() //entrambi usati per applicare modifiche solo a ciò che contenuto tra c.save() e c.restore()
+
+
+
+ 
 
 } 
 
@@ -128,7 +131,7 @@ window.addEventListener('keydown', (event) => {
     keys.a.pressed = true //movimento a sinistra
     break
     case 'w':
-    player.velocity.y = -15 //salto
+    player.velocity.y = -8 //salto
     break
     }
 })
