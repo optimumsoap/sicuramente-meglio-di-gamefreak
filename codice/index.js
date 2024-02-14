@@ -120,8 +120,13 @@ function animazione(){
        player.update() //abbiamo inserito il nostro player che cade all'interno dell'animazione sopra scritta (update ne aggiorna la posizione facendolo cadere verso il basso)
 
     player.velocity.x = 0
-    if(keys.d.pressed)player.velocity.x = 5
-    else if (keys.a.pressed) player.velocity.x = -5
+    if(keys.d.pressed) { 
+        player.switchSprite('Run')
+        player.velocity.x = 5
+    } else if (keys.a.pressed) player.velocity.x = -5
+    else if (player.velocity.y === 0) {
+        player.switchSprite('Idle')
+    }
 
     c.restore() //entrambi usati per applicare modifiche solo a ciò che contenuto tra c.save() e c.restore()
 
