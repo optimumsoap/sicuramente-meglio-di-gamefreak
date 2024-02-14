@@ -71,14 +71,14 @@ const player = new Player({
     animations: { 
         Idle: {  
             imageSrc: './img/warrior/idle.png',
-            frameRate: 8
+            frameRate: 8,
         },
         Run: {  
             imageSrc: './img/warrior/Run.png',
-            frameRate: 8
-        }
-    }
-});
+            frameRate: 8,
+        },
+    },
+})
 
 
 const keys = { //tutti i tasti della tastiera che voglio "sentire"
