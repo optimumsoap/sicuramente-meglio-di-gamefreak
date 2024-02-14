@@ -62,13 +62,24 @@ const gravity = 0.5
 
 const player = new Player({
     position: {
-    x: 100,
-    y: 300,
+        x: 100,
+        y: 300,
     },
     collisionBlocks,
     imageSrc: './img/warrior/idle.png',
     frameRate: 8,
-})
+    animations: { 
+        Idle: {  
+            imageSrc: './img/warrior/idle.png',
+            frameRate: 8
+        },
+        Run: {  
+            imageSrc: './img/warrior/Run.png',
+            frameRate: 8
+        }
+    }
+});
+
 
 const keys = { //tutti i tasti della tastiera che voglio "sentire"
     d: {
