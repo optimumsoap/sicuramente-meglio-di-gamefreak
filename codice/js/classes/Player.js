@@ -9,8 +9,13 @@ class Player extends Sprite { //Le classi sono un modello per creare oggetti.
         
         this.collisionBlocks = collisionBlocks
         this.animations = animations
-    }
+        for (let key in this.animations) {
+            const image = new Image()
+            image.src = this.animations[key].imageSrc
 
+            this.animations[key].image = image
+    }
+}
     //adesso però dobbiamo fargli cambiare le coordinate
     update(){
         this.updateHitbox()
