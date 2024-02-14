@@ -1,5 +1,5 @@
 class Player extends Sprite { //Le classi sono un modello per creare oggetti.
-    constructor({ position, collisionBlocks, imageSrc, frameRate, scale = 0.5}){ //permette di identificare tutte le proprietà del nostro player
+    constructor({ position, collisionBlocks, imageSrc, frameRate, scale = 0.5, animations}){ //permette di identificare tutte le proprietà del nostro player
         super({ imageSrc, frameRate, scale }) //chiama gli altri constructor collegati
         this.position = position 
         this.velocity = {
@@ -8,7 +8,7 @@ class Player extends Sprite { //Le classi sono un modello per creare oggetti.
         }
         
         this.collisionBlocks = collisionBlocks
-        
+        this.animations = animations
     }
 
     //adesso però dobbiamo fargli cambiare le coordinate
