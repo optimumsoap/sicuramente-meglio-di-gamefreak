@@ -8,9 +8,18 @@ class Player extends Sprite { //Le classi sono un modello per creare oggetti.
         }
         
         this.collisionBlocks = collisionBlocks
+        this.hitbox = {
+            position: {
+                x: this.position.x,
+                y: this.position.y,
+            },
+        width: 10,
+        height: 10,
+        }
     }
 }
             this.animations = animations
+
         for (let key in this.animations) {
             const image = new Image()
             image.src = this.animations[key].imageSrc
@@ -21,6 +30,9 @@ class Player extends Sprite { //Le classi sono un modello per creare oggetti.
         if (this.image === this.animations[key].image) return
 
         this.image = this.animations[key].image
+        this.frameBuffer = this.animations[key].frameBuffer
+        this.frameRate = this.animations[key].frameRate
+
     }
     //adesso però dobbiamo fargli cambiare le coordinate
     update(){
@@ -133,5 +145,3 @@ class Player extends Sprite { //Le classi sono un modello per creare oggetti.
             }
         }
     }
-
-}

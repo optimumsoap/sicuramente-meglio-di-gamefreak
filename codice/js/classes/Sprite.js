@@ -18,7 +18,7 @@ class Sprite {
     draw(){
         if(!this.image) return //questo previene possibili errori nella console in caso l'immagine non venisse caricata propriamente
 
-        const cropbox = {
+        const cropbox = { //cropbox serve a dividere le immagini siccome, gli sprite di animazione, sono immagini che su seguono
           position: {
             x: this.currentFrame * (this.image.width / this.frameRate),
             y: 0
