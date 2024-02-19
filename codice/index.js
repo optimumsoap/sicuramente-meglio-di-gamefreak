@@ -35,22 +35,23 @@ for (let i = 0; i < platformCollisions.length; i += 36) {
 platformCollisions2D.push(platformCollisions.slice(i, i + 36))
 }
 
-const platformCollisionBlock = []//creazione dei blocchi di collisione
+const platformCollisionBlocks = []//creazione dei blocchi di collisione
 platformCollisions2D.forEach((row, y) => {
 row.forEach((symbol, x) => {
     if(symbol === 202) {
-        console.log('draw a block here!')
-        platformCollisionBlock.push(new CollisionBlock({position: {
+        platformCollisionBlocks.push(new CollisionBlock({position: {
             x: x * 16,
             y: y * 16,
-        },}))
+        },
+        height: 4
+    }))
     }
     })
 })
 
 
 
-const gravity = 0.5
+const gravity = 0.1
 
 
 
@@ -66,7 +67,8 @@ const player = new Player({
         y: 300,
     },
     collisionBlocks,
-    imageSrc: './img/warrior/idle.png',
+    platformCollisionBlocks,
+    imageSrc: './img/warrior/Idle.png',
     frameRate: 8,
     animations: { 
         Idle: {  //animazione dell'attesa del comando
@@ -84,8 +86,34 @@ const player = new Player({
             frameRate: 2,
             frameBuffer: 3,
         },
-    },
+        Fall: {  //animazione della caduta
+            imageSrc: './img/warrior/Fall.png',
+            frameRate: 2,
+            frameBuffer: 3,
+        },
+        FallLeft: {  //animazione della caduta a sinistra
+            imageSrc: './img/warrior/FallLeft.png',
+            frameRate: 2,
+            frameBuffer: 3,
+        },
+        RunLeft: {  //animazione della corsa a sinistra
+            imageSrc: './img/warrior/RunLeft.png',
+            frameRate: 8,
+            frameBuffer: 5,
+        },
+        IdleLeft: {  //animazione dell'attesa del comando a sinistra
+            imageSrc: './img/warrior/IdleLeft.png',
+            frameRate: 8,
+            frameBuffer: 3,
+        },
+        JumpLeft: {  //animazione del salto a sinistra
+            imageSrc: './img/warrior/JumpLeft.png',
+            frameRate: 2,
+            frameBuffer: 3,
+        },
+    }
 })
+
 
 
 const keys = { //tutti i tasti della tastiera che voglio "sentire"
@@ -106,6 +134,16 @@ const background = new Sprite({
     imageSrc: './img/background.png'
 })
 
+const backgroundImageHeight = 432
+
+
+const camera = {
+    position: {
+        x: 0,
+        y: -backgroundImageHeight + scaledCanvas.height,
+    },
+}
+
 
 function animazione(){
     window.requestAnimationFrame(animazione)  //Il metodo window.requestAnimationFrame() dice al browser che desideri eseguire un'animazione.
@@ -114,36 +152,49 @@ function animazione(){
 
     c.save() //guardare c.restore() per la spiegazione
     c.scale(4, 4) //ridimensioniamo l'immagine per adattarla al nostro formato
-    c.translate(0, -background.image.height + scaledCanvas.height) //ci permette di traslare l'immagine, perché all'inizio partiva dall'alto, ma per spostarla verso il basso abbiamo utilizzato il translate i cui valori tra parentesi indicavano le coordinate.
+    c.translate(camera.position.x, camera.position.y) //ci permette di traslare l'immagine, perché all'inizio partiva dall'alto, ma per spostarla verso il basso abbiamo utilizzato il translate i cui valori tra parentesi indicavano le coordinate.
     background.update() // abbiamo inserito nell'animazione la nostra immagine
-    collisionBlocks.forEach(collisionBlock => {
-        collisionBlock.update()
-    })
+    //collisionBlocks.forEach(collisionBlock => {
+        //collisionBlock.update()
+    //})
 
-    platformCollisionBlock.forEach(block => {
-        block.update()
-    })
+    //platformCollisionBlocks.forEach(block => {
+        //block.update()
+    //})
 
+
+    player.checkForHorizontalCanvasCollisions()
        player.update() //abbiamo inserito il nostro player che cade all'interno dell'animazione sopra scritta (update ne aggiorna la posizione facendolo cadere verso il basso)
 
     player.velocity.x = 0
     if(keys.d.pressed) { 
         player.switchSprite('Run')
         player.velocity.x = 2
-    } else if (keys.a.pressed) player.velocity.x = -2
-    else if (player.velocity.y === 0) {
-        player.switchSprite('Idle')
+        player.lastDirection = 'right'
+        player.shouldPanCameraToTheLeft({ canvas, camera })
+
+    } else if (keys.a.pressed) {
+        player.switchSprite('RunLeft')
+        player.velocity.x = -2
+        player.lastDirection = 'left'
+        player.shouldPanCameraToTheRight({canvas, camera })
+    } else if (player.velocity.y === 0) {
+        if (player.lastDirection === 'right') player.switchSprite('Idle')
+            else player.switchSprite('IdleLeft')
     }
 
 
-    if (player.velocity.y < 0) player.switchSprite('Jump')
+    if (player.velocity.y < 0) {
+        player.shouldPanCameraDown({ camera, canvas })
+        if (player.lastDirection === 'right') player.switchSprite('Jump')
+        else player.switchSprite('JumpLeft')
+    } else if (player.velocity.y > 0) {
+        player.shouldPanCameraUp({ camera, canvas })
+        if (player.lastDirection === 'right') player.switchSprite('Fall')
+        else player.switchSprite('FallLeft')
+}
 
     c.restore() //entrambi usati per applicare modifiche solo a ciò che contenuto tra c.save() e c.restore()
-
-
-
- 
-
 } 
 
 
@@ -157,7 +208,7 @@ window.addEventListener('keydown', (event) => {
     keys.a.pressed = true //movimento a sinistra
     break
     case 'w':
-    player.velocity.y = -8 //salto
+    player.velocity.y = -4 //salto
     break
     }
 })
