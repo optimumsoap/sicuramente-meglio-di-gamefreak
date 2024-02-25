@@ -1,6 +1,14 @@
 body{
 background-color:black;
 }
-
+title{
+  color:white;
+  font-size: 80px;
+  font-family: Impact;
+}
+h2{
+  color:white;
+  font-size: 35px;
+}
 /*ho creato per piu' tardi questo documento*/
 /*non serve mettere il collegamento href anche qua, basta solo inserirlo sull'html*/
